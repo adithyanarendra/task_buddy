@@ -1,0 +1,26 @@
+.buddyButtonClass.outline {
+  border: 1px solid gray;
+  border-radius: 0.5rem;
+  padding: 0.3rem 0.8rem;
+  margin: 0.8rem;
+  transition: all 0.3s ease-in;
+  outline: none;
+}
+
+.buddyButtonClass.outline:hover {
+  background-color: rgb(199, 199, 199);
+  color: black;
+}
+
+.buddyButtonClass.fill {
+  background-color: #7b1984;
+  border-radius: 1.3rem;
+  padding: 0.3rem 0.8rem;
+  margin: 0.8rem;
+  transition: all 0.3s ease-in;
+  color: white;
+}
+
+.buddyButtonClass.fill:hover {
+    background-color: #4b1350;  
+}

@@ -14,21 +14,21 @@ const SignIn: React.FC = () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
-            console.log(result);
+            console.log("result...", result);
 
-            console.log(user);
-
+            setUser(user);
+            navigate('/tasks')
             await setDoc(doc(db, "users", user.uid), {
                 name: user.displayName,
                 email: user.email,
                 photoURL: user.photoURL,
             });
-            setUser(user);
-            navigate('/tasks')
+
         } catch (error) {
             console.error("Error during sign-in:", error);
         }
     };
+console.log("user...", user);
 
     const handleSignOut = async () => {
         try {

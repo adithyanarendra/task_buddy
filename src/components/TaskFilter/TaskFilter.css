@@ -1,0 +1,14 @@
+.TasksFilterContainer {
+  width: 100vw;
+  padding: 1rem 0.8rem;
+  color: rgb(139, 139, 139);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.actions {
+    display: flex;
+}
+
+

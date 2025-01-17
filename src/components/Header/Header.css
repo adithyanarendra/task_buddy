@@ -1,0 +1,57 @@
+.headerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100vw;
+  padding: 1rem 0.8rem;
+  color: rgb(139, 139, 139);
+}
+
+.headerItemContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+}
+
+.appName {
+  margin-bottom: 0.5rem;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.tab {
+  display: flex;
+  margin: 0.2rem 0;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in;
+}
+
+.tab:hover {
+  background-color: rgb(202, 202, 202);
+  color: black;
+}
+
+.selectedTab {
+  border-bottom: 1px solid rgb(139, 139, 139);
+}
+
+.headerUserContainer {
+  display: flex;
+}
+
+.headerUserImg {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 1px solid gray;
+  border-radius: 50%;
+}
+
+.headerUserName {
+  margin-left: 1rem;
+}
