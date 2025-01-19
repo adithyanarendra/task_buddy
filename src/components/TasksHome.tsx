@@ -13,6 +13,8 @@ const TasksHome = () => {
     <div>
       <Header onSelectedTab={handleActiveTabChange} />
       <TasksFilter />
+      {activeTab === 'list' && <div></div>}
+      {activeTab === 'board' && <div></div>}
     </div>
   )
 }

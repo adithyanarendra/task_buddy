@@ -11,6 +11,10 @@
   },
   "dependencies": {
     "@firebase/firestore": "^4.7.6",
+    "@fortawesome/free-brands-svg-icons": "^6.7.2",
+    "@fortawesome/free-regular-svg-icons": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@tanstack/react-query": "^5.64.1",
     "firebase": "^11.2.0",
     "react": "^18.3.1",

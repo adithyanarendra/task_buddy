@@ -1,0 +1,31 @@
+.CreateTaskModal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.CreateTaskContainer {
+  background-color: white;
+  max-width: 60rem;
+  border: 1px solid lightgray;
+  border-radius: 1rem;
+}
+
+.CreateTaskHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.TaskControls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}

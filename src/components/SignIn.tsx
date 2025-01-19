@@ -14,7 +14,7 @@ const SignIn: React.FC = () => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
-            console.log("result...", result);
+            // console.log("result...", result);
 
             setUser(user);
             navigate('/tasks')
@@ -28,7 +28,6 @@ const SignIn: React.FC = () => {
             console.error("Error during sign-in:", error);
         }
     };
-console.log("user...", user);
 
     const handleSignOut = async () => {
         try {

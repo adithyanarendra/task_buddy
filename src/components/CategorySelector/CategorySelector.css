@@ -1,0 +1,21 @@
+.CategorySelector {
+  display: flex;
+  flex-direction: column;
+}
+
+.CategoryButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.CategoryButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.CategoryButton:hover {
+  background-color: #e9e9e9;
+}

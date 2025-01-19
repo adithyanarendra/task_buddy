@@ -18,6 +18,22 @@
   margin-bottom: 0.5rem;
 }
 
+.appIcon {
+  width: auto;
+  height: 2rem;
+  padding-right: 1rem;
+}
+
+.appIcon svg {
+  width: auto;
+  height: 1.6rem;
+}
+
+.appNameText {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
 .tabs {
   display: flex;
   align-items: center;
@@ -38,7 +54,14 @@
 }
 
 .selectedTab {
-  border-bottom: 1px solid rgb(139, 139, 139);
+  border-bottom: 1px solid black;
+  color: black;
+}
+
+.tabIcon {
+  width: auto;
+  height: 1.2rem;
+  padding-right: 1rem;
 }
 
 .headerUserContainer {
@@ -46,8 +69,8 @@
 }
 
 .headerUserImg {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 2rem;
+  height: 2rem;
   border: 1px solid gray;
   border-radius: 50%;
 }
