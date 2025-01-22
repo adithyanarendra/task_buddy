@@ -2,14 +2,15 @@ import React, { useEffect, useState } from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 import TagIcon from '@mui/icons-material/Tag';
-import { AppBar, Avatar, Box, Button, Container, Toolbar, Typography } from '@mui/material';
+import { AppBar, Avatar, Box, Button, Container, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import CreateListModal from '../../components/CreateListModal';
 import ManageTagsModal from '../../components/ManageTagsModal';
 import TaskList from '../../components/TaskList';
 import { auth, db } from '../../firebaseConfig';
+import { useNavigate } from 'react-router-dom';
 
 interface TaskList {
     id: string;
@@ -23,6 +24,11 @@ const TaskHome: React.FC = () => {
     const [userDetails, setUserDetails] = useState<any>(null);
     const [openCreateListModal, setOpenCreateListModal] = useState(false);
     const [openManageTagsModal, setOpenManageTagsModal] = useState(false);
+
+    const navigate = useNavigate();
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const openMenu = Boolean(anchorEl);
+
 
     // Fetch task lists from Firestore
     const fetchTaskLists = async () => {
@@ -60,6 +66,25 @@ const TaskHome: React.FC = () => {
         }
     }, [user]);
 
+
+    // Handle opening the menu
+    const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    // Handle closing the menu
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    // Handle logging out
+    const handleLogout = async () => {
+        await signOut(auth);
+        setUser(null);
+        handleMenuClose();
+        navigate("/")
+    };
+
     return (
         <Box>
             <AppBar position="sticky">
@@ -68,8 +93,16 @@ const TaskHome: React.FC = () => {
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         {userDetails && user && (
                             <>
-                                <Avatar src={userDetails.photoURL} sx={{ mr: 1 }} />
-                                <Typography variant="body1" sx={{ fontSize: '0.9rem' }}>
+                                <Avatar
+                                    src={userDetails.photoURL}
+                                    sx={{ mr: 1, cursor: 'pointer' }}
+                                    onClick={handleMenuClick}
+                                />
+                                <Typography
+                                    variant="body1"
+                                    sx={{ fontSize: '0.9rem', cursor: 'pointer' }}
+                                    onClick={handleMenuClick}
+                                >
                                     {userDetails.displayName}
                                 </Typography>
                             </>
@@ -77,6 +110,7 @@ const TaskHome: React.FC = () => {
                     </Box>
                 </Toolbar>
             </AppBar>
+
 
             <Container sx={{ mt: 4 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2, gap: 2 }}>
@@ -115,6 +149,23 @@ const TaskHome: React.FC = () => {
                 open={openManageTagsModal}
                 onClose={() => setOpenManageTagsModal(false)}
             />
+
+            <Menu
+                anchorEl={anchorEl}
+                open={openMenu}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+            >
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
+
         </Box>
     );
 };
