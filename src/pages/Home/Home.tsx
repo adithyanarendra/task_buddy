@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Typography, Box, Button, Container, Avatar } from '@mui/material';
+
 import AddIcon from '@mui/icons-material/Add';
-import { auth, db } from '../../firebaseConfig';
+import TagIcon from '@mui/icons-material/Tag';
+import { AppBar, Avatar, Box, Button, Container, Toolbar, Typography } from '@mui/material';
+
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
-import TaskList from '../../components/TaskList';
 import CreateListModal from '../../components/CreateListModal';
+import ManageTagsModal from '../../components/ManageTagsModal';
+import TaskList from '../../components/TaskList';
+import { auth, db } from '../../firebaseConfig';
 
 interface TaskList {
     id: string;
@@ -18,6 +22,7 @@ const TaskHome: React.FC = () => {
     const [user, setUser] = useState<any>(null);
     const [userDetails, setUserDetails] = useState<any>(null);
     const [openCreateListModal, setOpenCreateListModal] = useState(false);
+    const [openManageTagsModal, setOpenManageTagsModal] = useState(false);
 
     // Fetch task lists from Firestore
     const fetchTaskLists = async () => {
@@ -74,13 +79,20 @@ const TaskHome: React.FC = () => {
             </AppBar>
 
             <Container sx={{ mt: 4 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2, gap: 2 }}>
                     <Button
                         variant="contained"
                         startIcon={<AddIcon />}
                         onClick={() => setOpenCreateListModal(true)}
                     >
                         Create List
+                    </Button>
+                    <Button
+                        variant="contained"
+                        startIcon={<TagIcon />}
+                        onClick={() => setOpenManageTagsModal(true)}
+                    >
+                        Manage Tags
                     </Button>
                 </Box>
 
@@ -97,6 +109,11 @@ const TaskHome: React.FC = () => {
                 open={openCreateListModal}
                 onClose={() => setOpenCreateListModal(false)}
                 fetchTaskLists={fetchTaskLists}
+            />
+
+            <ManageTagsModal
+                open={openManageTagsModal}
+                onClose={() => setOpenManageTagsModal(false)}
             />
         </Box>
     );

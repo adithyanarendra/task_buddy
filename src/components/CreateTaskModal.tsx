@@ -6,10 +6,11 @@ import { db } from '../firebaseConfig';
 interface CreateTaskModalProps {
     open: boolean;
     onClose: () => void;
+    refetch: () => void;
     listId: string;
 }
 
-const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ open, onClose, listId }) => {
+const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ open, onClose, refetch, listId }) => {
     const [taskName, setTaskName] = useState('');
     const [dueDate, setDueDate] = useState('');
 
@@ -21,6 +22,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ open, onClose, listId
         await updateDoc(listRef, {
             tasks: [...currentTasks, newTask],
         });
+        refetch()
         setTaskName('');
         setDueDate('');
         onClose();
@@ -58,6 +60,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ open, onClose, listId
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
                     sx={{ mb: 2 }}
+                    slotProps={{ inputLabel: { shrink: true } }}
                 />
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Button onClick={onClose}>Cancel</Button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, Typography, Button, Collapse, Box, Divider, Modal } from '@mui/material';
+import { Card, CardContent, Typography, Button, Collapse, Box, IconButton, Modal, ButtonGroup, Fab } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -23,7 +23,7 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
     const handleDeleteList = async () => {
         try {
             await deleteDoc(doc(db, 'taskLists', list.id));
-            await fetchTaskLists();
+            fetchTaskLists();
             setOpenDeleteModal(false);
         } catch (error) {
             console.error('Error deleting list:', error);
@@ -33,44 +33,49 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
     return (
         <Card sx={{ mb: 3 }}>
             <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                <Box sx={
+                    {
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mb: 2
+                    }}>
                     <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                         {list.name}
                     </Typography>
-                    <Box>
-                        <Button
-                            size="small"
-                            variant="outlined"
-                            startIcon={<AddIcon />}
-                            sx={{ mr: 1 }}
-                            onClick={() => setOpenCreateTaskModal(true)}
-                        >
-                            Add Task
-                        </Button>
-                        <Button
-                            size="small"
-                            variant="outlined"
-                            startIcon={open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                    <Box sx={{ display: "flex", alignItems: "start", justifyContent: "center", gap: "10px" }}>
+                        <ButtonGroup size="small" variant="outlined" sx={{ gap: "10px" }}>
+                            <Fab
+                                color="primary"
+                                size='small'
+                                onClick={() => setOpenCreateTaskModal(true)}
+                            >
+                                <AddIcon />
+                            </Fab>
+
+                            <Fab
+                                color="error"
+                                size='small'
+                                onClick={() => setOpenDeleteModal(true)}
+                            >
+                                <DeleteIcon />
+                            </Fab>
+                        </ButtonGroup>
+
+                        <Fab
                             onClick={() => setOpen(!open)}
-                        >
-                            {open ? 'Collapse' : 'Expand'} Tasks
-                        </Button>
-                        <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
-                        <Button
+                            color='primary'
                             size="small"
-                            variant="outlined"
-                            startIcon={<DeleteIcon />}
-                            color="error"
-                            onClick={() => setOpenDeleteModal(true)}
+                            sx={{ ml: 1 }}
                         >
-                            Delete List
-                        </Button>
+                            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        </Fab>
                     </Box>
                 </Box>
                 <Collapse in={open}>
                     <div>
                         {list.tasks.map((task: any) => (
-                            <TaskItem key={task.id} task={task} listId={list.id} />
+                            <TaskItem key={task.id} task={task} listId={list.id} refetch={fetchTaskLists} />
                         ))}
                     </div>
                 </Collapse>
@@ -80,6 +85,7 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
                 open={openCreateTaskModal}
                 onClose={() => setOpenCreateTaskModal(false)}
                 listId={list.id}
+                refetch={fetchTaskLists}
             />
 
             <Modal
