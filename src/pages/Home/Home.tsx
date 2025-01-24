@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import TagIcon from '@mui/icons-material/Tag';
 import { AppBar, Avatar, Box, Button, Container, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
-
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import CreateListModal from '../../components/CreateListModal';
 import ManageTagsModal from '../../components/ManageTagsModal';
 import TaskList from '../../components/TaskList';
+
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
 import { auth, db } from '../../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,7 +30,6 @@ const TaskHome: React.FC = () => {
     const openMenu = Boolean(anchorEl);
 
 
-    // Fetch task lists from Firestore
     const fetchTaskLists = async () => {
         const taskListsSnapshot = await getDocs(collection(db, 'taskLists'));
         const taskListsData = taskListsSnapshot.docs.map((doc) => ({
@@ -40,7 +39,6 @@ const TaskHome: React.FC = () => {
         setTaskLists(taskListsData);
     };
 
-    // Listen to auth state changes
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
@@ -59,7 +57,6 @@ const TaskHome: React.FC = () => {
         return () => unsubscribe();
     }, []);
 
-    // Run this effect to fetch the task lists when the component mounts
     useEffect(() => {
         if (user) {
             fetchTaskLists();
@@ -67,17 +64,14 @@ const TaskHome: React.FC = () => {
     }, [user]);
 
 
-    // Handle opening the menu
     const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
 
-    // Handle closing the menu
     const handleMenuClose = () => {
         setAnchorEl(null);
     };
 
-    // Handle logging out
     const handleLogout = async () => {
         await signOut(auth);
         setUser(null);
@@ -139,16 +133,6 @@ const TaskHome: React.FC = () => {
                 )}
             </Container>
 
-            <CreateListModal
-                open={openCreateListModal}
-                onClose={() => setOpenCreateListModal(false)}
-                fetchTaskLists={fetchTaskLists}
-            />
-
-            <ManageTagsModal
-                open={openManageTagsModal}
-                onClose={() => setOpenManageTagsModal(false)}
-            />
 
             <Menu
                 anchorEl={anchorEl}
@@ -166,6 +150,16 @@ const TaskHome: React.FC = () => {
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
 
+            <CreateListModal
+                open={openCreateListModal}
+                onClose={() => setOpenCreateListModal(false)}
+                fetchTaskLists={fetchTaskLists}
+            />
+
+            <ManageTagsModal
+                open={openManageTagsModal}
+                onClose={() => setOpenManageTagsModal(false)}
+            />
         </Box>
     );
 };

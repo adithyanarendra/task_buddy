@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Modal, TextField, Typography, List, ListItem, IconButton, Chip } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { collection, addDoc, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { Box, Button, Chip, Modal, TextField, Typography } from '@mui/material';
+import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 interface ManageTagsModalProps {
@@ -10,7 +9,7 @@ interface ManageTagsModalProps {
 }
 
 const ManageTagsModal: React.FC<ManageTagsModalProps> = ({ open, onClose }) => {
-    const [tags, setTags] = useState<string[]>([]);
+    const [tags, setTags] = useState<{ id: string; name: any; }[]>([]);
     const [newTag, setNewTag] = useState('');
 
     const fetchTags = async () => {
@@ -77,7 +76,7 @@ const ManageTagsModal: React.FC<ManageTagsModalProps> = ({ open, onClose }) => {
                 <Button variant="contained" fullWidth onClick={handleAddTag}>
                     Add Tag
                 </Button>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, my: 2}}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, my: 2 }}>
                     {tags.map((tag) => (
                         <Chip color='secondary'
                             key={tag?.id}

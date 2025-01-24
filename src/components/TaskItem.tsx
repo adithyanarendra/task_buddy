@@ -5,15 +5,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { arrayRemove, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import TaskDetailsModal from './TaskDetailsModal';
 
 interface TaskItemProps {
     task: any;
     listId: string;
-    refetch: () => void
+    textColor: string;
+    refetch: () => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, listId, refetch }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task, listId, textColor, refetch }) => {
     const [isComplete, setIsComplete] = useState(task.isComplete || false);
+    const [openModal, setOpenModal] = useState(false);
 
     const handleToggleComplete = async () => {
         const listRef = doc(db, 'taskLists', listId);
@@ -31,14 +34,17 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, listId, refetch }) => {
         refetch();
     };
 
-
-    const handleDeleteTask = async () => {
+    const handleDeleteTask = async (e: React.MouseEvent) => {
+        e.stopPropagation();
         const listRef = doc(db, 'taskLists', listId);
         await updateDoc(listRef, {
             tasks: arrayRemove(task),
         });
-        refetch()
+        refetch();
     };
+
+    console.log("...modal state", openModal);
+
 
     return (
         <Box
@@ -49,20 +55,22 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, listId, refetch }) => {
                 py: 1,
                 gap: 1,
             }}
+            onClick={() => setOpenModal(true)}
         >
             <Checkbox
                 checked={isComplete}
                 onChange={handleToggleComplete}
                 color="primary"
                 inputProps={{ 'aria-label': 'Mark task as complete' }}
+                onClick={(e) => e.stopPropagation()}
             />
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems:"start", overflow: 'hidden' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start', overflow: 'hidden', cursor: "pointer" }}>
                 <Typography
                     variant="body2"
                     sx={{
                         textDecoration: isComplete ? 'line-through' : 'none',
-                        color: isComplete ? 'gray' : 'inherit',
+                        color: isComplete ? 'gray' : textColor,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
@@ -73,7 +81,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, listId, refetch }) => {
                 <Typography
                     variant="caption"
                     sx={{
-                        color: 'gray',
+                        color: textColor,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
@@ -83,11 +91,20 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, listId, refetch }) => {
                 </Typography>
             </Box>
 
-            <IconButton color="error" onClick={handleDeleteTask}>
+            <IconButton
+                color="error"
+                onClick={handleDeleteTask}
+            >
                 <DeleteIcon />
             </IconButton>
+            <TaskDetailsModal
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+                task={task}
+                listId={listId}
+                refetch={refetch}
+            />
         </Box>
-
     );
 };
 

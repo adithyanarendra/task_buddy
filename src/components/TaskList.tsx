@@ -1,9 +1,18 @@
-import React, { useState } from 'react';
-import { Card, CardContent, Typography, Button, Collapse, Box, IconButton, Modal, ButtonGroup, Fab } from '@mui/material';
+import React, { useState, useMemo } from 'react';
+import {
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    Typography,
+    Modal,
+    Box,
+    Fab,
+    Button,
+} from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import DeleteIcon from '@mui/icons-material/Delete';
+
 import TaskItem from './TaskItem';
 import CreateTaskModal from './CreateTaskModal';
 
@@ -16,9 +25,59 @@ interface TaskListProps {
 }
 
 const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
-    const [open, setOpen] = useState(false);
     const [openCreateTaskModal, setOpenCreateTaskModal] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+    const calculateLuminance = (color: string) => {
+        const regex = /hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/;
+        const match = color.match(regex);
+
+        if (match) {
+            const s = parseFloat(match[2]) / 100;
+            const l = parseFloat(match[3]) / 100;
+
+            const luminance = (l + 0.05) / (1.05 - s * (l > 0.5 ? 1 - l : l));
+            return luminance * 21.3 + 4.6;
+        }
+        return 0;
+    };
+
+    const generatePastelDarkColor = () => {
+        const baseHue = Math.floor(Math.random() * 360);
+        const saturation = 30 + Math.random() * 20; // Slightly muted saturation for pastel effect
+        const lightness = 40 + Math.random() * 20; // Darker lightness for the pastel look
+
+        return `hsl(${baseHue}, ${saturation}%, ${lightness}%)`;
+    };
+
+    const getTextColor = (backgroundColor: string) => {
+        const luminance = calculateLuminance(backgroundColor);
+        return luminance < 128 ? 'white' : 'black';
+    };
+
+    const generateSubtleBackground = (bgColor: string) => {
+        const regex = /hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/;
+        const match = bgColor.match(regex);
+
+        if (match) {
+            const hue = match[1];
+            const saturation = match[2];
+            let lightness = parseFloat(match[3]);
+
+            // Decrease the lightness to create a subtler color
+            lightness = Math.max(lightness - 10, 30); // Don't go below 30% lightness
+
+            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        }
+
+        return bgColor; // Default return if something goes wrong
+    };
+
+    const randomColor = useMemo(() => generatePastelDarkColor(), []);
+    const subtleColor = useMemo(() => generateSubtleBackground(randomColor), [randomColor]);
+    const textColor = useMemo(() => getTextColor(subtleColor), [subtleColor]);
+
+
 
     const handleDeleteList = async () => {
         try {
@@ -31,56 +90,88 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
     };
 
     return (
-        <Card sx={{ mb: 3 }}>
-            <CardContent>
-                <Box sx={
-                    {
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        mb: 2
-                    }}>
-                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                        {list.name}
-                    </Typography>
-                    <Box sx={{ display: "flex", alignItems: "start", justifyContent: "center", gap: "10px" }}>
-                        <ButtonGroup size="small" variant="outlined" sx={{ gap: "10px" }}>
-                            <Fab
-                                color="primary"
-                                size='small'
-                                onClick={() => setOpenCreateTaskModal(true)}
-                            >
-                                <AddIcon />
-                            </Fab>
+        <Accordion
+            sx={{
+                backgroundColor: randomColor,
+                mb: 2,
+                borderRadius: 3,
+                overflow: 'hidden',
+                '&:last-of-type': {
+                    borderRadius: 3,
+                },
+                '&:before': {
+                    display: 'none',
+                },
+                '& .MuiAccordionSummary-root': {
+                    backgroundColor: subtleColor,
+                    color: textColor,
+                    borderRadius: 'inherit',
+                },
+            }}
+        >
+            {/* Accordion Header */}
+            <AccordionSummary
+                expandIcon={
+                    <ExpandMoreIcon
+                        sx={{
+                            color: list.tasks.length ? '#fff' : 'rgba(255, 255, 255, 0.5)',
+                            pointerEvents: list.tasks.length ? 'auto' : 'none',
+                        }}
+                    />
+                }
+                aria-controls={`panel-${list.id}-content`}
+                id={`panel-${list.id}-header`}
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    px: 2,
+                }}
+            >
+                <Typography variant="h6" sx={{ fontWeight: 'bold', flex: 1 }}>
+                    {list.name}
+                </Typography>
 
-                            <Fab
-                                color="error"
-                                size='small'
-                                onClick={() => setOpenDeleteModal(true)}
-                            >
-                                <DeleteIcon />
-                            </Fab>
-                        </ButtonGroup>
-
-                        <Fab
-                            onClick={() => setOpen(!open)}
-                            color='primary'
-                            size="small"
-                            sx={{ ml: 1 }}
-                        >
-                            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                        </Fab>
-                    </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Fab
+                        color="primary"
+                        size="small"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenCreateTaskModal(true);
+                        }}
+                        sx={{ backgroundColor: '#fff', color: randomColor }}
+                    >
+                        <AddIcon />
+                    </Fab>
+                    <Fab
+                        color="error"
+                        size="small"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setOpenDeleteModal(true);
+                        }}
+                        sx={{ backgroundColor: '#fff', color: 'red' }}
+                    >
+                        <DeleteIcon />
+                    </Fab>
                 </Box>
-                <Collapse in={open}>
-                    <div>
-                        {list.tasks.map((task: any) => (
-                            <TaskItem key={task.id} task={task} listId={list.id} refetch={fetchTaskLists} />
-                        ))}
-                    </div>
-                </Collapse>
-            </CardContent>
+            </AccordionSummary>
 
+            {/* Accordion Body */}
+            <AccordionDetails>
+                {list.tasks.length > 0 ? (
+                    list.tasks.map((task: any) => (
+                        <TaskItem key={task.id} task={task} listId={list.id} refetch={fetchTaskLists} textColor={textColor} />
+                    ))
+                ) : (
+                    <Typography variant="body2" sx={{ color: textColor, textAlign: 'center' }}>
+                        No tasks yet. Add one to get started!
+                    </Typography>
+                )}
+            </AccordionDetails>
+
+            {/* Create Task Modal */}
             <CreateTaskModal
                 open={openCreateTaskModal}
                 onClose={() => setOpenCreateTaskModal(false)}
@@ -88,6 +179,7 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
                 refetch={fetchTaskLists}
             />
 
+            {/* Delete Confirmation Modal */}
             <Modal
                 open={openDeleteModal}
                 onClose={() => setOpenDeleteModal(false)}
@@ -123,7 +215,7 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
                     </Box>
                 </Box>
             </Modal>
-        </Card>
+        </Accordion>
     );
 };
 
