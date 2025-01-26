@@ -52,9 +52,6 @@ const TaskItem: React.FC<TaskItemProps> = ({ task,
         refetch();
     };
 
-    console.log("...modal state", openModal);
-
-
     return (
         <Box
             ref={innerRef}
@@ -66,6 +63,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task,
                 alignItems: 'center',
                 py: 1,
                 gap: 1,
+                ...provided.draggableProps.style,
             }}
             onClick={() => setOpenModal(true)}
         >
@@ -109,7 +107,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task,
             >
                 <DeleteIcon />
             </IconButton>
-            
+
             <TaskDetailsModal
                 open={openModal}
                 onClose={() => setOpenModal(false)}

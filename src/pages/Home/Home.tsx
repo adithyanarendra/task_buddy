@@ -81,6 +81,8 @@ const TaskHome: React.FC = () => {
     };
 
     const handleDragEnd = async (result: DropResult) => {
+        console.log('...log', result);
+
         const { source, destination } = result;
 
         if (!destination) return;
@@ -153,18 +155,17 @@ const TaskHome: React.FC = () => {
                         Manage Tags
                     </Button>
                 </Box>
-
-                {taskLists.length === 0 ? (
-                    <Typography variant="h6" align="center" sx={{ mt: 4, color: 'gray' }}>
-                        No lists or tasks available. Create your first list to get started!
-                    </Typography>
-                ) : (
-                    <DragDropContext onDragEnd={handleDragEnd}>
-                        {taskLists.map((list) => (
+                <DragDropContext onDragEnd={handleDragEnd}>
+                    {taskLists.length === 0 ? (
+                        <Typography variant="h6" align="center" sx={{ mt: 4, color: 'gray' }}>
+                            No lists or tasks available. Create your first list to get started!
+                        </Typography>
+                    ) : (
+                        taskLists.map((list) => (
                             <TaskList key={list.id} list={list} fetchTaskLists={fetchTaskLists} />
-                        ))}
-                    </DragDropContext>
-                )}
+                        ))
+                    )}
+                </DragDropContext>
             </Container>
 
 

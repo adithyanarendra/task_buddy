@@ -114,14 +114,14 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
             </AccordionSummary>
 
             <AccordionDetails>
-                <Droppable droppableId={list.id}>
+                <Droppable key={list?.id} droppableId={list?.id}>
                     {(provided) => (
                         <Box
                             ref={provided.innerRef}
                             {...provided.droppableProps}
                             sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
                         >
-                            {list.tasks.map((task: any, index: number) => (
+                            {list?.tasks?.map((task: any, index: number) => (
                                 <Draggable key={task.id} draggableId={task.id} index={index}>
                                     {(provided) => (
                                         <Box
@@ -135,6 +135,8 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
                                                 listId={list.id}
                                                 refetch={fetchTaskLists}
                                                 textColor={textColor}
+                                                provided={provided}
+                                                innerRef={provided.innerRef}
                                             />
                                         </Box>
                                     )}
