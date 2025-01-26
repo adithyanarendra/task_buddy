@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { Box, Checkbox, IconButton, Typography } from '@mui/material';
+import { DraggableProvided } from 'react-beautiful-dnd';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { arrayRemove, doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -12,9 +13,17 @@ interface TaskItemProps {
     listId: string;
     textColor: string;
     refetch: () => void;
+    provided: DraggableProvided;
+    innerRef: (element: HTMLElement | null) => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, listId, textColor, refetch }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task,
+    listId,
+    textColor,
+    refetch,
+    provided,
+    innerRef
+}) => {
     const [isComplete, setIsComplete] = useState(task.isComplete || false);
     const [openModal, setOpenModal] = useState(false);
 
@@ -48,6 +57,9 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, listId, textColor, refetch })
 
     return (
         <Box
+            ref={innerRef}
+            {...provided?.draggableProps}
+            {...provided?.dragHandleProps}
             sx={{
                 display: 'grid',
                 gridTemplateColumns: 'auto 1fr auto',
@@ -97,6 +109,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, listId, textColor, refetch })
             >
                 <DeleteIcon />
             </IconButton>
+            
             <TaskDetailsModal
                 open={openModal}
                 onClose={() => setOpenModal(false)}

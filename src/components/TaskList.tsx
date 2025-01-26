@@ -9,6 +9,8 @@ import {
     Fab,
     Button,
 } from '@mui/material';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
+
 import AddIcon from '@mui/icons-material/Add';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -18,6 +20,7 @@ import CreateTaskModal from './CreateTaskModal';
 
 import { db } from '../firebaseConfig';
 import { deleteDoc, doc } from '@firebase/firestore';
+import { generatePastelDarkColor, generateSubtleBackground, getTextColor } from '../helpers/Utils';
 
 interface TaskListProps {
     list: any;
@@ -28,56 +31,9 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
     const [openCreateTaskModal, setOpenCreateTaskModal] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-    const calculateLuminance = (color: string) => {
-        const regex = /hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/;
-        const match = color.match(regex);
-
-        if (match) {
-            const s = parseFloat(match[2]) / 100;
-            const l = parseFloat(match[3]) / 100;
-
-            const luminance = (l + 0.05) / (1.05 - s * (l > 0.5 ? 1 - l : l));
-            return luminance * 21.3 + 4.6;
-        }
-        return 0;
-    };
-
-    const generatePastelDarkColor = () => {
-        const baseHue = Math.floor(Math.random() * 360);
-        const saturation = 30 + Math.random() * 20; // Slightly muted saturation for pastel effect
-        const lightness = 40 + Math.random() * 20; // Darker lightness for the pastel look
-
-        return `hsl(${baseHue}, ${saturation}%, ${lightness}%)`;
-    };
-
-    const getTextColor = (backgroundColor: string) => {
-        const luminance = calculateLuminance(backgroundColor);
-        return luminance < 128 ? 'white' : 'black';
-    };
-
-    const generateSubtleBackground = (bgColor: string) => {
-        const regex = /hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/;
-        const match = bgColor.match(regex);
-
-        if (match) {
-            const hue = match[1];
-            const saturation = match[2];
-            let lightness = parseFloat(match[3]);
-
-            // Decrease the lightness to create a subtler color
-            lightness = Math.max(lightness - 10, 30); // Don't go below 30% lightness
-
-            return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        }
-
-        return bgColor; // Default return if something goes wrong
-    };
-
     const randomColor = useMemo(() => generatePastelDarkColor(), []);
     const subtleColor = useMemo(() => generateSubtleBackground(randomColor), [randomColor]);
     const textColor = useMemo(() => getTextColor(subtleColor), [subtleColor]);
-
-
 
     const handleDeleteList = async () => {
         try {
@@ -109,7 +65,6 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
                 },
             }}
         >
-            {/* Accordion Header */}
             <AccordionSummary
                 expandIcon={
                     <ExpandMoreIcon
@@ -158,17 +113,37 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
                 </Box>
             </AccordionSummary>
 
-            {/* Accordion Body */}
             <AccordionDetails>
-                {list.tasks.length > 0 ? (
-                    list.tasks.map((task: any) => (
-                        <TaskItem key={task.id} task={task} listId={list.id} refetch={fetchTaskLists} textColor={textColor} />
-                    ))
-                ) : (
-                    <Typography variant="body2" sx={{ color: textColor, textAlign: 'center' }}>
-                        No tasks yet. Add one to get started!
-                    </Typography>
-                )}
+                <Droppable droppableId={list.id}>
+                    {(provided) => (
+                        <Box
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                            sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
+                        >
+                            {list.tasks.map((task: any, index: number) => (
+                                <Draggable key={task.id} draggableId={task.id} index={index}>
+                                    {(provided) => (
+                                        <Box
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            sx={{ mb: 1 }}
+                                        >
+                                            <TaskItem
+                                                task={task}
+                                                listId={list.id}
+                                                refetch={fetchTaskLists}
+                                                textColor={textColor}
+                                            />
+                                        </Box>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </Box>
+                    )}
+                </Droppable>
             </AccordionDetails>
 
             {/* Create Task Modal */}

@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import TagIcon from '@mui/icons-material/Tag';
 import { AppBar, Avatar, Box, Button, Container, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import CreateListModal from '../../components/CreateListModal';
 import ManageTagsModal from '../../components/ManageTagsModal';
 import TaskList from '../../components/TaskList';
 
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
 
@@ -79,6 +80,35 @@ const TaskHome: React.FC = () => {
         navigate("/")
     };
 
+    const handleDragEnd = async (result: DropResult) => {
+        const { source, destination } = result;
+
+        if (!destination) return;
+        if (source.droppableId === destination.droppableId && source.index === destination.index) return; // No movement
+
+        const sourceList = taskLists.find((list) => list.id === source.droppableId);
+        const destinationList = taskLists.find((list) => list.id === destination.droppableId);
+
+        if (sourceList && destinationList) {
+            const sourceTasks = [...sourceList.tasks];
+            const destinationTasks = [...destinationList.tasks];
+            const [movedTask] = sourceTasks.splice(source.index, 1);
+
+            destinationTasks.splice(destination.index, 0, movedTask);
+
+            const updatedTaskLists = taskLists.map((list) => {
+                if (list.id === sourceList.id) return { ...list, tasks: sourceTasks };
+                if (list.id === destinationList.id) return { ...list, tasks: destinationTasks };
+                return list;
+            });
+
+            setTaskLists(updatedTaskLists);
+
+            await updateDoc(doc(db, 'taskLists', sourceList.id), { tasks: sourceTasks });
+            await updateDoc(doc(db, 'taskLists', destinationList.id), { tasks: destinationTasks });
+        }
+    };
+
     return (
         <Box>
             <AppBar position="sticky">
@@ -129,7 +159,11 @@ const TaskHome: React.FC = () => {
                         No lists or tasks available. Create your first list to get started!
                     </Typography>
                 ) : (
-                    taskLists.map((list) => <TaskList key={list.id} list={list} fetchTaskLists={fetchTaskLists} />)
+                    <DragDropContext onDragEnd={handleDragEnd}>
+                        {taskLists.map((list) => (
+                            <TaskList key={list.id} list={list} fetchTaskLists={fetchTaskLists} />
+                        ))}
+                    </DragDropContext>
                 )}
             </Container>
 
