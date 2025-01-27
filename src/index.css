@@ -1,23 +1,21 @@
-/* CSS Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Set default styles for html and body */
 html,
 body {
   height: 100%;
   width: 100%;
-  font-family: "Roboto", sans-serif; /* Or your preferred font */
+  font-family: "Roboto", sans-serif;
 }
 
 body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f4f4f4; /* Optional background color */
+  background-color: #f4f4f4;
 }
 
 #root {

@@ -75,7 +75,9 @@ const TaskItem: React.FC<TaskItemProps> = ({ task,
                 onClick={(e) => e.stopPropagation()}
             />
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start', overflow: 'hidden', cursor: "pointer" }}>
+            <Box
+                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start', overflow: 'hidden', cursor: "pointer" }}
+            >
                 <Typography
                     variant="body2"
                     sx={{

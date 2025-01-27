@@ -1,50 +1,57 @@
-# React + TypeScript + Vite
+# Task Management Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+This project is a **Task Management Application** built using **React** and **TypeScript** for the frontend, **Firebase** for authentication and real-time data storage, and **Material-UI (MUI)** for a polished, responsive user interface. The app allows users to efficiently manage tasks with features like drag-and-drop functionality, categorization, due dates, and advanced sorting options.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **User Authentication**: Secure Google Sign-In integration using Firebase Authentication.
+- **Task Management**:
+  - Create, edit, and delete tasks.
+  - Set due dates, categories, and custom tags for tasks.
+  - Drag-and-drop functionality to organize tasks within and across lists.
+- **Views**:
+  - Toggle between **Board View** (Kanban-style) and **List View**.
+- **Advanced Filtering**:
+  - Filter tasks by tags, categories, or due dates.
+  - Search for tasks by keywords.
+- **Responsive Design**:
+  - Built with **Tailwind CSS** and **MUI** for an adaptive and seamless user experience.
+  - Fully responsive for desktop, tablet, and mobile devices.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Tech Stack
 
-- Configure the top-level `parserOptions` property like this:
+### Frontend
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- **React**: For building user interfaces.
+- **TypeScript**: For static typing and better developer experience.
+- **Material-UI (MUI)**: For pre-styled, accessible components.
+- **Tailwind CSS**: For custom styling and responsive design.
+- **React Beautiful DnD**: For drag-and-drop functionality.
+- **React Query**: For efficient data fetching and caching.
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Backend
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+- **Firebase**:
+  - Authentication: Used for secure Google Sign-In.
+  - Firestore: NoSQL database for real-time task management.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Folder Structure
+
+The project is organized into the following structure:
+
+src/ ├── assets/ # Images and other static assets
+├── components/ # Reusable React components
+├── helpers/ # Utility functions
+├── pages/ # Top-level application views
+
+## Drag-and-Drop Implementation
+
+Drag-and-drop functionality is implemented using the **React Beautiful DnD** library, which allows users to reorganize tasks easily. The tasks update in real-time with Firestore, ensuring a seamless user experience.
+
+### Steps for Drag-and-Drop
+
+1. Wrap your lists in a `<DragDropContext>` component.
+2. Each list becomes a `<Droppable>` area, and tasks are rendered as `<Draggable>` items.
+3. On drag end, the `handleDragEnd` function updates the state and syncs changes with Firestore.

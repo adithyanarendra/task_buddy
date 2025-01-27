@@ -148,7 +148,6 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
                 </Droppable>
             </AccordionDetails>
 
-            {/* Create Task Modal */}
             <CreateTaskModal
                 open={openCreateTaskModal}
                 onClose={() => setOpenCreateTaskModal(false)}
@@ -156,7 +155,6 @@ const TaskList: React.FC<TaskListProps> = ({ list, fetchTaskLists }) => {
                 refetch={fetchTaskLists}
             />
 
-            {/* Delete Confirmation Modal */}
             <Modal
                 open={openDeleteModal}
                 onClose={() => setOpenDeleteModal(false)}
